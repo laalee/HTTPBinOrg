@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "HTTPBinOrg.h"
 
 @interface HTTPBinOrgTests : XCTestCase
 
@@ -14,23 +15,70 @@
 
 @implementation HTTPBinOrgTests
 
-- (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+- (void)testFetchGetResponseInTime {
+    
+    HTTPBinOrg *httpBinOrg = [[HTTPBinOrg alloc] init];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"FetchGetResponseInTime"];
+    
+    NSString *url = @"https://httpbin.org/get";
+    
+    [httpBinOrg fetchGetResponseWithCallback:^(NSDictionary * _Nonnull dict, NSError * _Nonnull error) {
+        
+        NSString *dictUrl = dict[@"url"];
+        
+        XCTAssert([url isEqualToString:dictUrl]);
+        
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+    }];
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+- (void)testPostCustomerNameInTime {
+    
+    HTTPBinOrg *httpBinOrg = [[HTTPBinOrg alloc] init];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"PostCustomerNameInTime"];
+    
+    NSString *customerName = @"AnnieTest";
+    
+    [httpBinOrg postCustomerName:customerName callback:^(NSDictionary * _Nonnull dict, NSError * _Nonnull error) {
+        
+        NSDictionary *dictFrom = dict[@"form"];
+        NSString *callbackName = dictFrom[@"custname"];
+
+        XCTAssert([customerName isEqualToString:callbackName]);
+        
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+    }];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-}
-
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
+- (void)testFetchImageInTime {
+    
+    HTTPBinOrg *httpBinOrg = [[HTTPBinOrg alloc] init];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"FetchImageInTime"];
+    
+    [httpBinOrg fetchImageWithCallback:^(UIImage * _Nonnull image, NSError * _Nonnull error) {
+        
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
     }];
 }
 
