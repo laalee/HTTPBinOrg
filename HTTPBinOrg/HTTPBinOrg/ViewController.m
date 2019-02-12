@@ -8,11 +8,19 @@
 
 #import "ViewController.h"
 #import "HTTPBinOrg.h"
+#import "HTTPBinManager.h"
+
+#define StatusViewWidth 200
 
 @interface ViewController ()
+{
+    UILabel *percentLabel;
+    UIView *statusView;
+}
 @property HTTPBinOrg *httpBinOrg;
 @property UIStackView *stackView;
 @property UIImageView *imageView;
+@property NSLayoutConstraint *statusViewWidthConstraint;
 @end
 
 @implementation ViewController
@@ -20,43 +28,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self setupButtons];
+    [self setupFetchButton];
     
-    [self setupImage];
-    
-    self.httpBinOrg = [[HTTPBinOrg alloc] init];
-}
-
-- (void)fetchGetResponseWithCallback {
-    
-    [self.httpBinOrg fetchGetResponseWithCallback:^(NSDictionary * _Nonnull dict, NSError * _Nonnull error) {
-        
-        NSLog(@"ViewController.fetchGetResponseWithCallback, dict = %@", dict);
-    }];
-}
-
-- (void)postCustomerName {
-    
-    NSString *customerName = @"Annie";
-    
-    [self.httpBinOrg postCustomerName:customerName callback:^(NSDictionary * _Nonnull dict, NSError * _Nonnull error) {
-        
-        NSLog(@"ViewController.postCustomerName, dict = %@", dict);
-    }];
-}
-
-- (void)fetchImageWithCallback {
-    
-    __weak ViewController *weakSelf = self;
-    
-    [self.httpBinOrg fetchImageWithCallback:^(UIImage * _Nonnull image, NSError * _Nonnull error) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.imageView setImage:image];
-        });
-        
-        NSLog(@"ViewController.fetchImageWithCallback");
-    }];
+    [self setupStatusView];
+    [self setupStatusLabel];
 }
 
 - (void)setupImage {
@@ -78,43 +53,129 @@
     [self.view addConstraint:topConstraint];
 }
 
-- (void)setupButtons {
+- (void)setupFetchButton {
     
-    self.stackView = [[UIStackView alloc] init];
-    self.stackView.axis = UILayoutConstraintAxisVertical;
-    self.stackView.alignment = UIStackViewAlignmentFill;
-    self.stackView.distribution = UIStackViewDistributionFillEqually;
-    self.stackView.spacing = 10;
-    self.stackView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:self.stackView];
+    UIButton *button = [[UIButton alloc] init];
     
-    NSArray *buttonTitle = [[NSArray alloc] initWithObjects:@"Get", @"Post customer name", @"Fetch image", nil];
-
-    NSArray *buttonSelector = [[NSArray alloc] initWithObjects:@"fetchGetResponseWithCallback", @"postCustomerName", @"fetchImageWithCallback", nil];
+    button.translatesAutoresizingMaskIntoConstraints = NO;
     
-    for (int i = 0; i < [buttonTitle count]; i++) {
-        UIButton *button = [[UIButton alloc] init];
-        [button setTitle:buttonTitle[i] forState:UIControlStateNormal];
-        [button setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
-        [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateHighlighted];
-        button.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.stackView addArrangedSubview:button];
-
-        SEL NSSelectorFromString (NSString *aSelectorName);
-        [button addTarget:self action:NSSelectorFromString(buttonSelector[i]) forControlEvents:UIControlEventTouchUpInside];
-    }
+    [self.view addSubview:button];
     
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:self.stackView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:300];
+    [button setTitle:@"Fetch Data" forState:UIControlStateNormal];
+    
+    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateHighlighted];
+    [button.layer setBackgroundColor:[UIColor lightGrayColor].CGColor];
+    [button.layer setCornerRadius:10.0];
+    [button.layer setShadowOffset:CGSizeMake(3, 3)];
+    [button.layer setShadowColor:[[UIColor blackColor] CGColor]];
+    [button.layer setShadowOpacity:0.5];
+    
+    [button addTarget:self action:@selector(executeOperation) forControlEvents:UIControlEventTouchUpInside];
+    
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:button attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:150];
     [self.view addConstraint:widthConstraint];
-    
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:self.stackView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:200];
-    [self.view addConstraint:heightConstraint];
-    
-    NSLayoutConstraint *verticalConstraint = [NSLayoutConstraint constraintWithItem:self.stackView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0];
+
+    NSLayoutConstraint *verticalConstraint = [NSLayoutConstraint constraintWithItem:button attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0];
     [self.view addConstraint:verticalConstraint];
     
-    NSLayoutConstraint *horizontalConstraint = [NSLayoutConstraint constraintWithItem:self.stackView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
+    NSLayoutConstraint *horizontalConstraint = [NSLayoutConstraint constraintWithItem:button attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
     [self.view addConstraint:horizontalConstraint];
+}
+
+- (void)setupStatusView
+{
+    UIView *borderView = [[UIView alloc] init];
+    
+    borderView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self.view addSubview:borderView];
+    
+    borderView.layer.borderColor = [UIColor blackColor].CGColor;
+    borderView.layer.borderWidth = 3.0f;
+    
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:borderView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:StatusViewWidth];
+    [self.view addConstraint:widthConstraint];
+    
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:borderView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:30];
+    [self.view addConstraint:heightConstraint];
+    
+    NSLayoutConstraint *verticalConstraint = [NSLayoutConstraint constraintWithItem:borderView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0];
+    [self.view addConstraint:verticalConstraint];
+    
+    NSLayoutConstraint *horizontalConstraint = [NSLayoutConstraint constraintWithItem:borderView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:100];
+    [self.view addConstraint:horizontalConstraint];
+    
+    statusView = [[UIView alloc] init];
+    
+    statusView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self.view addSubview:statusView];
+    
+    [statusView setBackgroundColor:[UIColor darkGrayColor]];
+    
+    self.statusViewWidthConstraint = [NSLayoutConstraint constraintWithItem:statusView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:0];
+    [self.view addConstraint:self.statusViewWidthConstraint];
+    
+    NSLayoutConstraint *statusViewHeightConstraint = [NSLayoutConstraint constraintWithItem:statusView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:borderView attribute:NSLayoutAttributeHeight multiplier:1.0 constant:0];
+    [self.view addConstraint:statusViewHeightConstraint];
+    
+    NSLayoutConstraint *statusViewLeftConstraint = [NSLayoutConstraint constraintWithItem:statusView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:borderView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
+    [self.view addConstraint:statusViewLeftConstraint];
+    
+    NSLayoutConstraint *statusViewHorizontalConstraint = [NSLayoutConstraint constraintWithItem:statusView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:borderView attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
+    [self.view addConstraint:statusViewHorizontalConstraint];
+}
+
+- (void)setupStatusLabel {
+    
+    percentLabel = [[UILabel alloc] init];
+    
+    percentLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self.view addSubview:percentLabel];
+    
+    [percentLabel setText:@"0"];
+    
+    NSLayoutConstraint *verticalConstraint = [NSLayoutConstraint constraintWithItem:percentLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0];
+    [self.view addConstraint:verticalConstraint];
+    
+    NSLayoutConstraint *horizontalConstraint = [NSLayoutConstraint constraintWithItem:percentLabel attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:70];
+    [self.view addConstraint:horizontalConstraint];
+}
+
+- (void)executeOperation
+{
+    [HTTPBinManager.sharedInstance executeOperation];
+    HTTPBinManager.sharedInstance.delegate = self;
+}
+
+- (void)manager:(nonnull HTTPBinManager *)manager didChangeStatusWithPercent:(nonnull NSString *)percent
+{
+    CGFloat widthPercent = [percent integerValue] / 100.0;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [self->percentLabel setText:percent];
+        
+        self.statusViewWidthConstraint.constant = StatusViewWidth * widthPercent;
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            [self.view layoutIfNeeded];
+        }];
+    });
+}
+
+- (void)manager:(nonnull HTTPBinManager *)manager didCancelWithError:(nonnull NSString *)error
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [self->percentLabel setText:@"0"];
+        
+        self.statusViewWidthConstraint.constant = 0;
+        
+        [self.view layoutIfNeeded];
+    });
 }
 
 @end

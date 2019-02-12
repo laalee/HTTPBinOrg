@@ -20,8 +20,6 @@
     
     NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
-        NSLog(@"HTTPBinOrg.fetchGetResponseWithCallback success.");
-        
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
         
         callback(dict, nil);
@@ -43,8 +41,6 @@
     
     NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
-        NSLog(@"HTTPBinOrg.postCustomerName success.");
-
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
         
         callback(dict, error);
@@ -62,9 +58,7 @@
     NSURLSession *session = [NSURLSession sharedSession];
     
     NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        
-        NSLog(@"HTTPBinOrg.fetchImageWithCallback success.");
-        
+                
         UIImage *image = [UIImage imageWithData:data];
         
         callback(image, error);

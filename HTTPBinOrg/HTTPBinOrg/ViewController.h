@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HTTPBinManager.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <HTTPBinManagerDelegate>
 
 
 @end

@@ -16,6 +16,8 @@
 		E6433CC92201B8A0003E8419 /* HTTPBinOrgTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E6433CC82201B8A0003E8419 /* HTTPBinOrgTests.m */; };
 		E6433CD42201B8A0003E8419 /* HTTPBinOrgUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = E6433CD32201B8A0003E8419 /* HTTPBinOrgUITests.m */; };
 		E6433CE32201B8D0003E8419 /* HTTPBinOrg.m in Sources */ = {isa = PBXBuildFile; fileRef = E6433CE22201B8D0003E8419 /* HTTPBinOrg.m */; };
+		E6BB27EE2212790B0060DE61 /* HTTPBinManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BB27ED2212790B0060DE61 /* HTTPBinManager.m */; };
+		E6BB27F4221280F90060DE61 /* HTTPBinManagerOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BB27F3221280F90060DE61 /* HTTPBinManagerOperation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,10 @@
 		E6433CD52201B8A0003E8419 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E6433CE12201B8D0003E8419 /* HTTPBinOrg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPBinOrg.h; sourceTree = "<group>"; };
 		E6433CE22201B8D0003E8419 /* HTTPBinOrg.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HTTPBinOrg.m; sourceTree = "<group>"; };
+		E6BB27EC2212790B0060DE61 /* HTTPBinManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPBinManager.h; sourceTree = "<group>"; };
+		E6BB27ED2212790B0060DE61 /* HTTPBinManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HTTPBinManager.m; sourceTree = "<group>"; };
+		E6BB27F2221280F90060DE61 /* HTTPBinManagerOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPBinManagerOperation.h; sourceTree = "<group>"; };
+		E6BB27F3221280F90060DE61 /* HTTPBinManagerOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HTTPBinManagerOperation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +121,10 @@
 				E6433CBE2201B8A0003E8419 /* main.m */,
 				E6433CE12201B8D0003E8419 /* HTTPBinOrg.h */,
 				E6433CE22201B8D0003E8419 /* HTTPBinOrg.m */,
+				E6BB27EC2212790B0060DE61 /* HTTPBinManager.h */,
+				E6BB27ED2212790B0060DE61 /* HTTPBinManager.m */,
+				E6BB27F2221280F90060DE61 /* HTTPBinManagerOperation.h */,
+				E6BB27F3221280F90060DE61 /* HTTPBinManagerOperation.m */,
 			);
 			path = HTTPBinOrg;
 			sourceTree = "<group>";
@@ -270,7 +280,9 @@
 				E6433CE32201B8D0003E8419 /* HTTPBinOrg.m in Sources */,
 				E6433CB42201B89F003E8419 /* ViewController.m in Sources */,
 				E6433CBF2201B8A0003E8419 /* main.m in Sources */,
+				E6BB27EE2212790B0060DE61 /* HTTPBinManager.m in Sources */,
 				E6433CB12201B89F003E8419 /* AppDelegate.m in Sources */,
+				E6BB27F4221280F90060DE61 /* HTTPBinManagerOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
