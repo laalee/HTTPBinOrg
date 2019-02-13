@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class HTTPBinManagerOperation;
 
@@ -14,7 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol HTTPBinOperationDelegate <NSObject>
 - (void)operation:(HTTPBinManagerOperation *)operation didChangeStatusWithPercent:(NSString*)percent;
-- (void)operation:(HTTPBinManagerOperation *)operation didCancelWithError:(NSString*)error;
+- (void)operation:(HTTPBinManagerOperation *)operation willCancelWithError:(NSString*)error;
+- (void)operation:(HTTPBinManagerOperation *)operation updateDataWithImage:(UIImage*)image;
 @end
 
 @interface HTTPBinManagerOperation : NSOperation

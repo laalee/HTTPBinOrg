@@ -9,24 +9,32 @@
 #import "HTTPBinManagerOperation.h"
 #import "HTTPBinOrg.h"
 
+@interface HTTPBinManagerOperation ()
+{
+    UIImage *image;
+}
+@end
+
 @implementation HTTPBinManagerOperation
 
 - (void)main {
     
     HTTPBinOrg *httpBinOrg = [[HTTPBinOrg alloc] init];
-    
+        
     // first API
     
     self.semaphore = dispatch_semaphore_create(0);
     
     [httpBinOrg fetchGetResponseWithCallback:^(NSDictionary * _Nonnull dict, NSError * _Nonnull error) {
-        
+
         if(error) {
             
-            [self.delegate operation:self didCancelWithError:@"error"];
+            [self.delegate operation:self willCancelWithError:error.domain];
+            
+        } else {
+            
+            [self.delegate operation:self didChangeStatusWithPercent:@"33"];
         }
-        
-        [self.delegate operation:self didChangeStatusWithPercent:@"33"];
         
         dispatch_semaphore_signal(self.semaphore);
     }];
@@ -34,8 +42,6 @@
     dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
     
     if (self.cancelled) {
-
-        [self.delegate operation:self didCancelWithError:@"cancel pressed."];
         
         return;
     }
@@ -47,14 +53,16 @@
     NSString *customerName = @"Annie";
     
     [httpBinOrg postCustomerName:customerName callback:^(NSDictionary * _Nonnull dict, NSError * _Nonnull error) {
-                
+        
         if(error) {
+
+            [self.delegate operation:self willCancelWithError:error.domain];
             
-            [self.delegate operation:self didCancelWithError:@"error"];
+        } else {
+            
+            [self.delegate operation:self didChangeStatusWithPercent:@"66"];
         }
         
-        [self.delegate operation:self didChangeStatusWithPercent:@"66"];
-
         dispatch_semaphore_signal(self.semaphore);
     }];
     
@@ -62,8 +70,6 @@
     
     if (self.cancelled) {
         
-        [self.delegate operation:self didCancelWithError:@"cancel pressed."];
-
         return;
     }
     
@@ -75,15 +81,21 @@
         
         if(error) {
             
-            [self.delegate operation:self didCancelWithError:@"error"];
+            [self.delegate operation:self willCancelWithError:error.domain];
+            
+        } else {
+            
+            self->image = image;
+            
+            [self.delegate operation:self didChangeStatusWithPercent:@"100"];
         }
         
-        [self.delegate operation:self didChangeStatusWithPercent:@"100"];
-
         dispatch_semaphore_signal(self.semaphore);
     }];
     
     dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
+    
+    [self.delegate operation:self updateDataWithImage:image];
 }
 
 - (void)cancel

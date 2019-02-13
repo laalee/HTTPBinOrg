@@ -36,9 +36,7 @@
 }
 
 - (void)executeOperation
-{
-    [self.delegate manager:self didCancelWithError:@"clear"];
-    
+{    
     [self.queue cancelAllOperations];
     
     HTTPBinManagerOperation *operation = [[HTTPBinManagerOperation alloc] init];
@@ -55,9 +53,17 @@
     [self.delegate manager:self didChangeStatusWithPercent:percent];
 }
 
-- (void)operation:(HTTPBinManagerOperation *)operation didCancelWithError:(NSString*)error
+- (void)operation:(HTTPBinManagerOperation *)operation willCancelWithError:(NSString*)error
 {
+    [self.queue cancelAllOperations];
+    
     [self.delegate manager:self didCancelWithError:error];
 }
+
+- (void)operation:(nonnull HTTPBinManagerOperation *)operation updateDataWithImage:(nonnull UIImage *)image
+{
+    [self.delegate manager:self didGetImage:image];
+}
+
 
 @end

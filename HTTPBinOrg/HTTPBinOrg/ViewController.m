@@ -49,8 +49,8 @@
     NSLayoutConstraint *verticalConstraint = [NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0];
     [self.view addConstraint:verticalConstraint];
     
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.stackView.arrangedSubviews[2] attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
-    [self.view addConstraint:topConstraint];
+    NSLayoutConstraint *horizontalConstraint = [NSLayoutConstraint constraintWithItem:self.imageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:0.5 constant:0];
+    [self.view addConstraint:horizontalConstraint];
 }
 
 - (void)setupFetchButton {
@@ -120,7 +120,7 @@
     NSLayoutConstraint *statusViewHeightConstraint = [NSLayoutConstraint constraintWithItem:statusView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:borderView attribute:NSLayoutAttributeHeight multiplier:1.0 constant:0];
     [self.view addConstraint:statusViewHeightConstraint];
     
-    NSLayoutConstraint *statusViewLeftConstraint = [NSLayoutConstraint constraintWithItem:statusView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:borderView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
+    NSLayoutConstraint *statusViewLeftConstraint = [NSLayoutConstraint constraintWithItem:statusView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:borderView attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
     [self.view addConstraint:statusViewLeftConstraint];
     
     NSLayoutConstraint *statusViewHorizontalConstraint = [NSLayoutConstraint constraintWithItem:statusView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:borderView attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
@@ -148,6 +148,14 @@
 {
     [HTTPBinManager.sharedInstance executeOperation];
     HTTPBinManager.sharedInstance.delegate = self;
+    
+    [self->percentLabel setText:@"0"];
+    
+    self.statusViewWidthConstraint.constant = 0;
+    
+    [self.view layoutIfNeeded];
+    
+    self.imageView.image = nil;
 }
 
 - (void)manager:(nonnull HTTPBinManager *)manager didChangeStatusWithPercent:(nonnull NSString *)percent
@@ -155,7 +163,7 @@
     CGFloat widthPercent = [percent integerValue] / 100.0;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        
+    
         [self->percentLabel setText:percent];
         
         self.statusViewWidthConstraint.constant = StatusViewWidth * widthPercent;
@@ -170,11 +178,17 @@
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        [self->percentLabel setText:@"0"];
+        [self->percentLabel setText:error];
+    });
+}
+
+- (void)manager:(nonnull HTTPBinManager *)manager didGetImage:(nonnull UIImage *)image
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
         
-        self.statusViewWidthConstraint.constant = 0;
+        [self setupImage];
         
-        [self.view layoutIfNeeded];
+        [self.imageView setImage:image];
     });
 }
 

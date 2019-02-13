@@ -8,6 +8,9 @@
 
 #import "HTTPBinOrg.h"
 
+#define HTTPStatusCodeError @"HTTPStatusCodeError"
+#define DataError @"DataError"
+
 @implementation HTTPBinOrg
 
 - (void)fetchGetResponseWithCallback:(void(^)(NSDictionary *, NSError *))callback {
@@ -20,7 +23,32 @@
     
     NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
+        if (error) {
+            
+            callback(nil, error);
+            
+            return;
+        }
+        
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+        
+        NSInteger httpStatusCode = [httpResponse statusCode];
+        
+        if (httpStatusCode < 200 || httpStatusCode >= 300) {
+            
+            callback(nil, [NSError errorWithDomain:HTTPStatusCodeError code:httpStatusCode userInfo:nil]);
+            
+            return;
+        }
+        
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+        
+        if (!dict) {
+            
+            callback(nil, [NSError errorWithDomain:DataError code:0 userInfo:nil]);
+            
+            return;
+        }
         
         callback(dict, nil);
     }];
@@ -41,9 +69,34 @@
     
     NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
+        if (error) {
+            
+            callback(nil, error);
+            
+            return;
+        }
+        
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+        
+        NSInteger httpStatusCode = [httpResponse statusCode];
+        
+        if (httpStatusCode < 200 || httpStatusCode >= 300) {
+            
+            callback(nil, [NSError errorWithDomain:HTTPStatusCodeError code:httpStatusCode userInfo:nil]);
+            
+            return;
+        }
+        
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
         
-        callback(dict, error);
+        if (!dict) {
+            
+            callback(nil, [NSError errorWithDomain:DataError code:0 userInfo:nil]);
+            
+            return;
+        }
+        
+        callback(dict, nil);
     }];
     
     [sessionDataTask resume];
@@ -58,10 +111,35 @@
     NSURLSession *session = [NSURLSession sharedSession];
     
     NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                
+
+        if (error) {
+            
+            callback(nil, error);
+            
+            return;
+        }
+
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
+        
+        NSInteger httpStatusCode = [httpResponse statusCode];
+        
+        if (httpStatusCode < 200 || httpStatusCode >= 300) {
+            
+            callback(nil, [NSError errorWithDomain:HTTPStatusCodeError code:httpStatusCode userInfo:nil]);
+            
+            return;
+        }
+
         UIImage *image = [UIImage imageWithData:data];
         
-        callback(image, error);
+        if (!image) {
+            
+            callback(nil, [NSError errorWithDomain:DataError code:0 userInfo:nil]);
+            
+            return;
+        }
+        
+        callback(image, nil);
     }];
     
     [sessionDataTask resume];
