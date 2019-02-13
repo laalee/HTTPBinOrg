@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "HTTPBinManager.h"
+#import "HTTPBinView.h"
 
-@interface ViewController : UIViewController <HTTPBinManagerDelegate>
-
+@interface ViewController : UIViewController <HTTPBinManagerDelegate, HTTPBinViewDelegate>
 
 @end
 

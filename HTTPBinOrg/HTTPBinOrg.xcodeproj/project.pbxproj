@@ -18,6 +18,7 @@
 		E6433CE32201B8D0003E8419 /* HTTPBinOrg.m in Sources */ = {isa = PBXBuildFile; fileRef = E6433CE22201B8D0003E8419 /* HTTPBinOrg.m */; };
 		E6BB27EE2212790B0060DE61 /* HTTPBinManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BB27ED2212790B0060DE61 /* HTTPBinManager.m */; };
 		E6BB27F4221280F90060DE61 /* HTTPBinManagerOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BB27F3221280F90060DE61 /* HTTPBinManagerOperation.m */; };
+		E6BB27F72213FB370060DE61 /* HTTPBinView.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BB27F62213FB370060DE61 /* HTTPBinView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,8 @@
 		E6BB27ED2212790B0060DE61 /* HTTPBinManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HTTPBinManager.m; sourceTree = "<group>"; };
 		E6BB27F2221280F90060DE61 /* HTTPBinManagerOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPBinManagerOperation.h; sourceTree = "<group>"; };
 		E6BB27F3221280F90060DE61 /* HTTPBinManagerOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HTTPBinManagerOperation.m; sourceTree = "<group>"; };
+		E6BB27F52213FB370060DE61 /* HTTPBinView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPBinView.h; sourceTree = "<group>"; };
+		E6BB27F62213FB370060DE61 /* HTTPBinView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HTTPBinView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +128,8 @@
 				E6BB27ED2212790B0060DE61 /* HTTPBinManager.m */,
 				E6BB27F2221280F90060DE61 /* HTTPBinManagerOperation.h */,
 				E6BB27F3221280F90060DE61 /* HTTPBinManagerOperation.m */,
+				E6BB27F52213FB370060DE61 /* HTTPBinView.h */,
+				E6BB27F62213FB370060DE61 /* HTTPBinView.m */,
 			);
 			path = HTTPBinOrg;
 			sourceTree = "<group>";
@@ -282,6 +287,7 @@
 				E6433CBF2201B8A0003E8419 /* main.m in Sources */,
 				E6BB27EE2212790B0060DE61 /* HTTPBinManager.m in Sources */,
 				E6433CB12201B89F003E8419 /* AppDelegate.m in Sources */,
+				E6BB27F72213FB370060DE61 /* HTTPBinView.m in Sources */,
 				E6BB27F4221280F90060DE61 /* HTTPBinManagerOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
