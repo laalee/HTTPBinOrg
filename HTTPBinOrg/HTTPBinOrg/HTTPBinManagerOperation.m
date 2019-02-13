@@ -27,16 +27,14 @@
     
     [httpBinOrg fetchGetResponseWithCallback:^(NSDictionary * _Nonnull dict, NSError * _Nonnull error) {
 
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if(error) {
-                
-                [self.delegate operation:self willCancelWithError:error.domain];
-                
-            } else {
-                
-                [self.delegate operation:self didChangeStatusWithPercent:@"33"];
-            }
-        });
+        if(error) {
+            
+            [self.delegate operation:self willCancelWithError:error.domain];
+            
+        } else {
+            
+            [self.delegate operation:self didChangeStatusWithPercent:@"33"];
+        }
 
         dispatch_semaphore_signal(self.semaphore);
     }];
@@ -56,16 +54,14 @@
     
     [httpBinOrg postCustomerName:customerName callback:^(NSDictionary * _Nonnull dict, NSError * _Nonnull error) {
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if(error) {
-                
-                [self.delegate operation:self willCancelWithError:error.domain];
-                
-            } else {
-                
-                [self.delegate operation:self didChangeStatusWithPercent:@"66"];
-            }
-        });
+        if(error) {
+            
+            [self.delegate operation:self willCancelWithError:error.domain];
+            
+        } else {
+            
+            [self.delegate operation:self didChangeStatusWithPercent:@"66"];
+        }
 
         dispatch_semaphore_signal(self.semaphore);
     }];
@@ -83,18 +79,16 @@
     
     [httpBinOrg fetchImageWithCallback:^(UIImage * _Nonnull image, NSError * _Nonnull error) {
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if(error) {
-                
-                [self.delegate operation:self willCancelWithError:error.domain];
-                
-            } else {
-                
-                self->image = image;
-                
-                [self.delegate operation:self didChangeStatusWithPercent:@"100"];
-            }
-        });
+        if(error) {
+            
+            [self.delegate operation:self willCancelWithError:error.domain];
+            
+        } else {
+            
+            self->image = image;
+            
+            [self.delegate operation:self didChangeStatusWithPercent:@"100"];
+        }
 
         dispatch_semaphore_signal(self.semaphore);
     }];
