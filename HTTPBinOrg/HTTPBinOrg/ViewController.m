@@ -45,25 +45,17 @@
 
 - (void)manager:(nonnull HTTPBinManager *)manager didChangeStatusWithPercent:(nonnull NSString *)percent
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.httpBinView updateStatusWithPercent:percent];
-    });
+    [self.httpBinView updateStatusWithPercent:percent];
 }
 
 - (void)manager:(nonnull HTTPBinManager *)manager didCancelWithError:(nonnull NSString *)error
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [self.httpBinView updateStatusWithError:error];
-    });
+    [self.httpBinView updateStatusWithError:error];
 }
 
 - (void)manager:(nonnull HTTPBinManager *)manager didGetImage:(nonnull UIImage *)image
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [self.httpBinView.imageView setImage:image];
-    });
+    [self.httpBinView.imageView setImage:image];
 }
 
 #pragma mark - HTTPBinViewDelegate

@@ -17,17 +17,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)manager:(HTTPBinManager *)manager didChangeStatusWithPercent:(NSString*)percent;
 - (void)manager:(HTTPBinManager *)manager didCancelWithError:(NSString*)error;
 - (void)manager:(HTTPBinManager *)manager didGetImage:(UIImage*)image;
-
 @end
 
 @interface HTTPBinManager : NSObject <HTTPBinOperationDelegate>
-
 @property (nonatomic, strong) NSOperationQueue *queue;
 @property (strong, nonatomic) id <HTTPBinManagerDelegate> delegate;
-
 + (instancetype) sharedInstance;
 - (void)executeOperation;
-
 @end
 
 NS_ASSUME_NONNULL_END

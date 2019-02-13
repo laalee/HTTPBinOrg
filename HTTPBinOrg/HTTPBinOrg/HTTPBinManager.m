@@ -9,10 +9,6 @@
 #import "HTTPBinManager.h"
 #import "HTTPBinManagerOperation.h"
 
-@interface HTTPBinManager ()
-
-@end
-
 @implementation HTTPBinManager
 
 + (instancetype)sharedInstance
@@ -64,6 +60,5 @@
 {
     [self.delegate manager:self didGetImage:image];
 }
-
 
 @end
