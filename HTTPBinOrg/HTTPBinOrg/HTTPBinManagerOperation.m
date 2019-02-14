@@ -93,7 +93,11 @@
 - (void)cancel
 {
     [super cancel];
-    dispatch_semaphore_signal(self.semaphore);
+    
+    if (self.semaphore) {
+        
+        dispatch_semaphore_signal(self.semaphore);
+    }
 }
 
 @end
