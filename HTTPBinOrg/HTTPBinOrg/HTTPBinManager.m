@@ -44,12 +44,12 @@
 
 #pragma mark - HTTPBinOperationDelegate
 
-- (void)operation:(HTTPBinManagerOperation *)operation didChangeStatusWithPercent:(NSString*)percent
+- (void)operation:(HTTPBinManagerOperation *)operation didChangeStatusWithPercent:(NSInteger)percent
 {
     [self.delegate manager:self didChangeStatusWithPercent:percent];
 }
 
-- (void)operation:(HTTPBinManagerOperation *)operation willCancelWithError:(NSString*)error
+- (void)operation:(HTTPBinManagerOperation *)operation willCancelWithError:(NSError*)error
 {
     [self.queue cancelAllOperations];
     

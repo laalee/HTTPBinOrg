@@ -165,21 +165,20 @@
     self.imageView.image = nil;
 }
 
-- (void)updateStatusWithPercent:(NSString*)percent
+- (void)updateStatusWithPercent:(NSInteger)percent
 {
-    [percentLabel setText:percent];
-    CGFloat widthPercent = [percent integerValue] / 100.0;
+    [percentLabel setText:[NSString stringWithFormat:@"%ld", (long)percent]];
     
-    statusViewWidthConstraint.constant = StatusViewWidth * widthPercent;
+    statusViewWidthConstraint.constant = StatusViewWidth * percent / 100.0;
     
     [UIView animateWithDuration:0.3 animations:^{
         [self layoutIfNeeded];
     }];
 }
 
-- (void)updateStatusWithError:(NSString*)error
+- (void)updateStatusWithError:(NSError*)error
 {
-    [percentLabel setText:error];
+    [percentLabel setText:[error localizedDescription]];
 }
 
 @end

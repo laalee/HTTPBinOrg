@@ -9,12 +9,6 @@
 #import "HTTPBinManagerOperation.h"
 #import "HTTPBinOrg.h"
 
-@interface HTTPBinManagerOperation ()
-{
-    UIImage *image;
-}
-@end
-
 @implementation HTTPBinManagerOperation
 
 - (void)main {
@@ -29,11 +23,11 @@
 
         if(error) {
             
-            [self.delegate operation:self willCancelWithError:error.domain];
+            [self.delegate operation:self willCancelWithError:error];
             
         } else {
             
-            [self.delegate operation:self didChangeStatusWithPercent:@"33"];
+            [self.delegate operation:self didChangeStatusWithPercent:33];
         }
 
         dispatch_semaphore_signal(self.semaphore);
@@ -56,11 +50,11 @@
         
         if(error) {
             
-            [self.delegate operation:self willCancelWithError:error.domain];
+            [self.delegate operation:self willCancelWithError:error];
             
         } else {
             
-            [self.delegate operation:self didChangeStatusWithPercent:@"66"];
+            [self.delegate operation:self didChangeStatusWithPercent:66];
         }
 
         dispatch_semaphore_signal(self.semaphore);
@@ -81,23 +75,19 @@
         
         if(error) {
             
-            [self.delegate operation:self willCancelWithError:error.domain];
+            [self.delegate operation:self willCancelWithError:error];
             
         } else {
             
-            self->image = image;
+            [self.delegate operation:self didChangeStatusWithPercent:100];
             
-            [self.delegate operation:self didChangeStatusWithPercent:@"100"];
+            [self.delegate operation:self updateDataWithImage:image];
         }
 
         dispatch_semaphore_signal(self.semaphore);
     }];
     
     dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.delegate operation:self updateDataWithImage:self->image];
-    });
 }
 
 - (void)cancel

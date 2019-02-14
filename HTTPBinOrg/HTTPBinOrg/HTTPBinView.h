@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HTTPBinView : UIView
 @property (weak, nonatomic) id <HTTPBinViewDelegate> delegate;
 @property UIImageView *imageView;
-- (void)updateStatusWithPercent:(NSString*)percent;
-- (void)updateStatusWithError:(NSString*)error;
+- (void)updateStatusWithPercent:(NSInteger)percent;
+- (void)updateStatusWithError:(NSError*)error;
 @end
 
 NS_ASSUME_NONNULL_END

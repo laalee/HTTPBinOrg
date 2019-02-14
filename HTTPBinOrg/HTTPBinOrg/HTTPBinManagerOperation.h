@@ -14,8 +14,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol HTTPBinOperationDelegate <NSObject>
-- (void)operation:(HTTPBinManagerOperation *)operation didChangeStatusWithPercent:(NSString*)percent;
-- (void)operation:(HTTPBinManagerOperation *)operation willCancelWithError:(NSString*)error;
+- (void)operation:(HTTPBinManagerOperation *)operation didChangeStatusWithPercent:(NSInteger)percent;
+- (void)operation:(HTTPBinManagerOperation *)operation willCancelWithError:(NSError*)error;
 - (void)operation:(HTTPBinManagerOperation *)operation updateDataWithImage:(UIImage*)image;
 @end
 

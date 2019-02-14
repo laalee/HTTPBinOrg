@@ -9,7 +9,8 @@
 #import "HTTPBinOrg.h"
 
 #define HTTPStatusCodeError @"HTTPStatusCodeError"
-#define DataError @"DataError"
+#define EmptyDataError @"EmptyDataError"
+#define HTTPBinErrorDomain @"HTTPBinErrorDomain"
 
 @implementation HTTPBinOrg
 
@@ -19,41 +20,23 @@
     
     NSURLRequest *request =[NSURLRequest requestWithURL:url];
     
-    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
     
-    NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        
-        if (error) {
-            
-            callback(nil, error);
-            
-            return;
-        }
-        
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-        
-        NSInteger httpStatusCode = [httpResponse statusCode];
-        
-        if (httpStatusCode < 200 || httpStatusCode >= 300) {
-            
-            callback(nil, [NSError errorWithDomain:HTTPStatusCodeError code:httpStatusCode userInfo:nil]);
-            
-            return;
-        }
-        
-        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
-        
-        if (!dict) {
-            
-            callback(nil, [NSError errorWithDomain:DataError code:0 userInfo:nil]);
-            
-            return;
-        }
-        
-        callback(dict, nil);
-    }];
-    
-    [sessionDataTask resume];
+    [self HTTPBinSessionDataTaskWithRequest:request
+                                 andSession:session
+                                    Success:^(NSData * data) {
+                                        
+                                        NSError *jsonError = nil;
+                                        
+                                        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&jsonError];
+                                        
+                                        callback(dict, jsonError);
+                                    }
+                                    Failure:^(NSError * error) {
+                                        
+                                        callback(nil, error);
+                                    }];
 }
 
 - (void)postCustomerName:(NSString *)name callback:(void(^)(NSDictionary *, NSError *))callback {
@@ -65,41 +48,23 @@
     NSString *args = [NSString stringWithFormat:@"custname=%@", name];
     request.HTTPBody = [args dataUsingEncoding:NSUTF8StringEncoding];
     
-    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
     
-    NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        
-        if (error) {
-            
-            callback(nil, error);
-            
-            return;
-        }
-        
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-        
-        NSInteger httpStatusCode = [httpResponse statusCode];
-        
-        if (httpStatusCode < 200 || httpStatusCode >= 300) {
-            
-            callback(nil, [NSError errorWithDomain:HTTPStatusCodeError code:httpStatusCode userInfo:nil]);
-            
-            return;
-        }
-        
-        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
-        
-        if (!dict) {
-            
-            callback(nil, [NSError errorWithDomain:DataError code:0 userInfo:nil]);
-            
-            return;
-        }
-        
-        callback(dict, nil);
-    }];
-    
-    [sessionDataTask resume];
+    [self HTTPBinSessionDataTaskWithRequest:request
+                                 andSession:session
+                                    Success:^(NSData * data) {
+                                        
+                                        NSError *jsonError = nil;
+                                        
+                                        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&jsonError];
+                                        
+                                        callback(dict, jsonError);
+                                    }
+                                    Failure:^(NSError * error) {
+                                        
+                                        callback(nil, error);
+                                    }];
 }
 
 - (void)fetchImageWithCallback:(void(^)(UIImage *, NSError *))callback {
@@ -108,38 +73,63 @@
     
     NSURLRequest *request =[NSURLRequest requestWithURL:url];
     
-    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
+    
+    [self HTTPBinSessionDataTaskWithRequest:request
+                                 andSession:session
+                                    Success:^(NSData * data) {
+                                        
+                                        UIImage *image = [UIImage imageWithData:data];
+                                        
+                                        callback(image, nil);
+                                    }
+                                    Failure:^(NSError * error) {
+                                        
+                                        callback(nil, error);
+                                    }];
+}
+
+- (void)HTTPBinSessionDataTaskWithRequest:(NSURLRequest*)request andSession:(NSURLSession*)session Success:(void(^)(NSData *))success Failure:(void(^)(NSError *))failure {
     
     NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-
+        
         if (error) {
             
-            callback(nil, error);
+            failure(error);
             
             return;
         }
-
+        
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
         
         NSInteger httpStatusCode = [httpResponse statusCode];
         
         if (httpStatusCode < 200 || httpStatusCode >= 300) {
             
-            callback(nil, [NSError errorWithDomain:HTTPStatusCodeError code:httpStatusCode userInfo:nil]);
+            NSError *statusError = [NSError errorWithDomain:HTTPBinErrorDomain
+                                                       code:0
+                                                   userInfo:@{NSLocalizedDescriptionKey: HTTPStatusCodeError,
+                                                              @"StatusCode": [NSNumber numberWithInteger:httpStatusCode]
+                                                              }];
             
-            return;
-        }
-
-        UIImage *image = [UIImage imageWithData:data];
-        
-        if (!image) {
-            
-            callback(nil, [NSError errorWithDomain:DataError code:0 userInfo:nil]);
+            failure(statusError);
             
             return;
         }
         
-        callback(image, nil);
+        if (!data) {
+            
+            NSError *dataError = [NSError errorWithDomain:HTTPBinErrorDomain
+                                                       code:0
+                                                   userInfo:@{NSLocalizedDescriptionKey: EmptyDataError}];
+            
+            failure(dataError);
+            
+            return;
+        }
+        
+        success(data);
     }];
     
     [sessionDataTask resume];
